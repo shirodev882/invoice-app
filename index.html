@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無料請求書アプリ</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <h2>請求書メーカー</h2>
+    
+    <label>請求先名:</label><br>
+    <input type="text" id="clientName" placeholder="例: Yamada Taro"><br><br>
+
+    <label>請求金額:</label><br>
+    <input type="text" id="amount" placeholder="例: 50000"><br><br>
+
+    <label>品目:</label><br>
+    <input type="text" id="itemName" placeholder="例: Web Design"><br><br>
+
+    <button onclick="generatePDF()">PDFを作成する</button>
+
+    <script src="main.js"></script>
+</body>
+</html>

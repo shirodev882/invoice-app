@@ -63,6 +63,8 @@ function addRow(data = {}) {
     div.className = 'item-card';
 
     const dDate = data.date || '';
+    // 💡日付が入っていればdate型、空っぽならtext型（プレースホルダー表示用）にする
+    const dateType = dDate ? 'date' : 'text'; 
     const dName = data.name || '';
     const dPrice = data.price || '';
     const dQty = data.qty || '1';
@@ -70,8 +72,11 @@ function addRow(data = {}) {
     const dNote = data.note || '';
 
     div.innerHTML = `
+        <div style="text-align: right; margin-bottom: 5px;">
+            <span onclick="removeRow(this)" style="color: #dc3545; font-size: 13px; cursor: pointer; font-weight: bold;">✖ 削除</span>
+        </div>
         <div class="item-row">
-            <input type="date" class="item-date" value="${dDate}">
+            <input type="${dateType}" class="item-date" placeholder="日付" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'" value="${dDate}">
             <input type="text" class="item-name" placeholder="品名 (例: 出張費)" value="${dName}">
         </div>
         <div class="item-row col-3">
@@ -85,7 +90,6 @@ function addRow(data = {}) {
         </div>
         <div class="item-row">
             <input type="text" class="item-note" placeholder="備考 (任意)" value="${dNote}">
-            <button type="button" class="delete-btn" onclick="removeRow(this)">削除</button>
         </div>
     `;
     container.appendChild(div);
@@ -97,7 +101,6 @@ function removeRow(btn) {
     saveItems();
 }
 
-// 💡STEP 1: プレビュー画面を表示する処理
 function previewPDF() {
     saveItems();
     localStorage.setItem('myZip', document.getElementById('myZip').value);
@@ -168,29 +171,24 @@ function previewPDF() {
     document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
     document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
 
-    // 入力画面を隠して、プレビュー画面を表示
     document.getElementById('app-container').style.display = "none";
-    document.getElementById('preview-container').style.display = "flex";
-    window.scrollTo(0, 0); // 画面の一番上に戻す
+    document.getElementById('preview-container').style.display = "block";
+    window.scrollTo(0, 0); 
 }
 
-// 💡STEP 2: プレビュー画面を閉じて、修正に戻る処理
 function closePreview() {
     document.getElementById('preview-container').style.display = "none";
     document.getElementById('app-container').style.display = "block";
     window.scrollTo(0, 0);
 }
 
-// 💡STEP 3: プレビューでOKなら、実際にPDF化してシェアする処理
 function executePDF() {
     const clientName = document.getElementById('clientName').value || 'お客様';
     const invoiceElement = document.getElementById('invoice-layout');
     
-    // 撮影する一瞬だけ、下の操作ボタン（◀修正する / 送信する▶）を消す
     const actionButtons = document.querySelector('.preview-actions');
     actionButtons.style.display = "none";
 
-    // 0.1秒だけ待ってから撮影（ボタンが確実に消えた状態を撮るため）
     setTimeout(() => {
         const opt = {
             margin:       0,
@@ -201,8 +199,6 @@ function executePDF() {
         };
 
         html2pdf().set(opt).from(invoiceElement).output('blob').then(function(blob) {
-            
-            // 撮影が終わったらボタンを復活させる
             actionButtons.style.display = "flex";
 
             const file = new File([blob], '請求書_' + clientName + '.pdf', { type: 'application/pdf' });

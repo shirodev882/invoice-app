@@ -36,21 +36,17 @@ input, select {
 .clear-btn { flex: 1; padding: 12px; background-color: #fff; color: #dc3545; border: 1px solid #dc3545; border-radius: 6px; font-size: 14px; cursor: pointer; }
 
 .main-btn { width: 100%; padding: 15px; background-color: #92c021; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-.delete-btn { padding: 12px; background-color: #dc3545; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; white-space: nowrap; }
 
-/* 💡プレビュー画面全体の設定 */
+/* 💡修正ポイント：Flexboxをやめて左側見切れを防止 */
 #preview-container {
-    background: #333333; /* 背景を暗くしてプレビュー感を出す */
+    display: block; /* Flexをやめる */
+    background: #333333; 
     min-height: 100vh;
-    padding-top: 20px;
-    padding-bottom: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: -10px; /* bodyのpaddingを相殺 */
+    padding: 20px 10px 100px 10px;
+    overflow-x: auto; /* 横スクロールを許可 */
+    margin: -10px; 
 }
 
-/* 💡プレビュー操作ボタン（画面下に固定浮上） */
 .preview-actions {
     position: fixed;
     bottom: 20px;
@@ -79,11 +75,18 @@ input, select {
 .cancel-btn { background: #ffffff; color: #333; }
 .share-btn { background: #92c021; color: white; }
 
-/* PDF用（紙の請求書）のデザイン */
+/* 💡修正ポイント：PCでは中央寄せ、スマホでは左寄せでスクロール */
 .invoice-box {
-    width: 800px; min-width: 800px; padding: 50px; background: white; color: black;
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; box-sizing: border-box;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5); /* 影をつけて紙っぽくする */
+    display: block; /* 必須 */
+    margin: 0 auto; /* PCなどの広い画面では中央寄せにする */
+    width: 800px; 
+    min-width: 800px; 
+    padding: 50px; 
+    background: white; 
+    color: black;
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; 
+    box-sizing: border-box;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5); 
 }
 .invoice-title { text-align: center; letter-spacing: 10px; border-bottom: 2px solid #92c021; padding-bottom: 10px; margin-bottom: 40px; }
 .header-info { display: flex; justify-content: space-between; margin-bottom: 30px; }

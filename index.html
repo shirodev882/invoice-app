@@ -30,7 +30,28 @@
 
             <label style="margin-top:20px; display:block;">品目リスト（自動保存）:</label>
             <div id="input-items-container">
+                <div class="item-card">
+                    <div style="text-align: right; margin-bottom: 5px;">
+                        <span onclick="removeRow(this)" style="color: #dc3545; font-size: 13px; cursor: pointer; font-weight: bold;">✖ 削除</span>
+                    </div>
+                    <div class="item-row">
+                        <input type="text" class="item-date" placeholder="日付" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
+                        <input type="text" class="item-name" placeholder="品名 (例: 出張費)">
+                    </div>
+                    <div class="item-row col-3">
+                        <input type="number" class="item-price" placeholder="単価">
+                        <input type="number" class="item-qty" placeholder="数量" value="1">
+                        <select class="item-tax">
+                            <option value="0.1">10%</option>
+                            <option value="0.08">8%</option>
+                            <option value="0">対象外</option>
+                        </select>
+                    </div>
+                    <div class="item-row">
+                        <input type="text" class="item-note" placeholder="備考 (任意)">
+                    </div>
                 </div>
+            </div>
             
             <div class="action-buttons">
                 <button type="button" class="add-btn" onclick="addRow()">+ 品目を追加</button>
@@ -42,7 +63,6 @@
     </div>
 
     <div id="preview-container" style="display: none;">
-        
         <div class="preview-actions">
             <button class="cancel-btn" onclick="closePreview()">◀ 修正する</button>
             <button class="share-btn" onclick="executePDF()">送信・保存する ▶</button>

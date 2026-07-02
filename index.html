@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-container" id="app-container">
         <h2>請求書メーカー</h2>
 
         <div class="input-section">
@@ -27,29 +27,14 @@
             <label>請求先名:</label>
             <input type="text" id="clientName" placeholder="例: 株式会社山田商事">
 
-            <label style="margin-top:20px; display:block;">品目リスト:</label>
+            <label style="margin-top:20px; display:block;">品目リスト（自動保存）:</label>
             <div id="input-items-container">
-                <div class="item-card">
-                    <div class="item-row">
-                        <input type="date" class="item-date">
-                        <input type="text" class="item-name" placeholder="品名 (例: 出張費)">
-                    </div>
-                    <div class="item-row col-3">
-                        <input type="number" class="item-price" placeholder="単価">
-                        <input type="number" class="item-qty" placeholder="数量" value="1">
-                        <select class="item-tax">
-                            <option value="0.1">10%</option>
-                            <option value="0.08">8%</option>
-                            <option value="0">対象外</option>
-                        </select>
-                    </div>
-                    <div class="item-row">
-                        <input type="text" class="item-note" placeholder="備考 (任意)">
-                        <button type="button" class="delete-btn" onclick="removeRow(this)">削除</button>
-                    </div>
                 </div>
+            
+            <div class="action-buttons">
+                <button type="button" class="add-btn" onclick="addRow()">+ 品目を追加</button>
+                <button type="button" class="clear-btn" onclick="clearAllItems()">🗑️ 全削除</button>
             </div>
-            <button type="button" class="add-btn" onclick="addRow()">+ 品目を追加する</button>
         </div>
 
         <button class="main-btn" onclick="generatePDF()">この内容でPDFを作成する</button>

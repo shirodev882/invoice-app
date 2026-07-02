@@ -32,24 +32,17 @@ input, select {
 .item-name { flex: 1; }
 .item-note { flex: 1; }
 
-.main-btn {
-    width: 100%; padding: 15px; background-color: #92c021; color: white;
-    border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer;
-}
-.add-btn {
-    width: 100%; padding: 12px; background-color: #f1f3f5; color: #333;
-    border: 1px dashed #adb5bd; border-radius: 6px; font-size: 14px; cursor: pointer;
-}
-.delete-btn {
-    padding: 12px; background-color: #dc3545; color: white; border: none;
-    border-radius: 6px; font-size: 14px; cursor: pointer; white-space: nowrap;
-}
+.action-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+.add-btn { flex: 2; padding: 12px; background-color: #f1f3f5; color: #333; border: 1px dashed #adb5bd; border-radius: 6px; font-size: 14px; cursor: pointer; }
+.clear-btn { flex: 1; padding: 12px; background-color: #fff; color: #dc3545; border: 1px solid #dc3545; border-radius: 6px; font-size: 14px; cursor: pointer; }
 
-/* PDF用の絶対見切れないデザイン */
+.main-btn { width: 100%; padding: 15px; background-color: #92c021; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+.delete-btn { padding: 12px; background-color: #dc3545; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; white-space: nowrap; }
+
+/* PDF用の絶対見切れない・真っ白にならないデザイン */
 .invoice-box {
     width: 800px; min-width: 800px; padding: 50px; background: white; color: black;
-    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-    box-sizing: border-box;
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; box-sizing: border-box;
 }
 .invoice-title { text-align: center; letter-spacing: 10px; border-bottom: 2px solid #92c021; padding-bottom: 10px; margin-bottom: 40px; }
 .header-info { display: flex; justify-content: space-between; margin-bottom: 30px; }

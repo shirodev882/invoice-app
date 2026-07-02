@@ -160,54 +160,47 @@ function generatePDF() {
     document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
     document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
 
-    // 💡【真っ白・見切れ防止の完全決着】
-    // スクロール位置を一番上に戻し、画面の一番手前に白背景で広げて確実に撮影する
-    window.scrollTo(0, 0);
+    // --- 真っ白バグ＆見切れバグの完全修正 ---
+    const appContainer = document.getElementById('app-container');
     const invoiceElement = document.getElementById('invoice-layout');
     
+    // スクロールを一番上に戻し、入力画面を隠して請求書を表示
+    window.scrollTo(0, 0);
+    appContainer.style.display = "none";
     invoiceElement.style.display = "block";
-    invoiceElement.style.position = "absolute";
-    invoiceElement.style.top = "0";
-    invoiceElement.style.left = "0";
-    invoiceElement.style.width = "800px";
-    invoiceElement.style.zIndex = "9999"; 
     invoiceElement.style.backgroundColor = "#ffffff";
 
-    const opt = {
-        margin:       0,
-        filename:     '請求書_' + clientName + '.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { 
-            scale: 2, 
-            windowWidth: 800, 
-            width: 800,
-            scrollX: 0, 
-            scrollY: 0 
-        }, 
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    // 💡【重要】スマホが文字を描画し終わるまで「0.5秒」だけ待つ！
+    setTimeout(() => {
+        const opt = {
+            margin:       0,
+            filename:     '請求書_' + clientName + '.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, scrollX: 0, scrollY: 0 }, 
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
 
-    html2pdf().set(opt).from(invoiceElement).output('blob').then(function(blob) {
-        // 撮影が終わったら隠す
-        invoiceElement.style.display = "none";
-        invoiceElement.style.position = "static";
-        invoiceElement.style.zIndex = "auto";
+        html2pdf().set(opt).from(invoiceElement).output('blob').then(function(blob) {
+            // 撮影が終わったら元の画面に戻す
+            invoiceElement.style.display = "none";
+            appContainer.style.display = "block";
 
-        const file = new File([blob], '請求書_' + clientName + '.pdf', { type: 'application/pdf' });
+            const file = new File([blob], '請求書_' + clientName + '.pdf', { type: 'application/pdf' });
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({
-                files: [file],
-                title: '請求書',
-                text: '請求書のPDFデータをお送りします。'
-            }).catch(e => console.log("シェアをキャンセルしました"));
-        } else {
-            const url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '請求書_' + clientName + '.pdf';
-            a.click();
-        }
-    });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    files: [file],
+                    title: '請求書',
+                    text: '請求書のPDFデータをお送りします。'
+                }).catch(e => console.log("シェアをキャンセルしました"));
+            } else {
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '請求書_' + clientName + '.pdf';
+                a.click();
+            }
+        });
+    }, 500); // ← ここが「真っ白」を防ぐための待ち時間です
 }

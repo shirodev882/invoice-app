@@ -43,20 +43,16 @@ function removeRow(btn) {
 }
 
 function generatePDF() {
-    // データの保存
     localStorage.setItem('myZip', document.getElementById('myZip').value);
     localStorage.setItem('myAddress', document.getElementById('myAddress').value);
     localStorage.setItem('myCompany', document.getElementById('myCompany').value);
     localStorage.setItem('myPhone', document.getElementById('myPhone').value);
     localStorage.setItem('myEmail', document.getElementById('myEmail').value);
 
-    // データの流し込み
     const clientName = document.getElementById('clientName').value;
     document.getElementById('pdf-client').innerText = clientName + " 御中";
-    
     const dateVal = document.getElementById('issueDate').value;
     document.getElementById('pdf-date').innerText = dateVal.replace(/-/g, '/');
-
     document.getElementById('pdf-zip').innerText = "〒" + document.getElementById('myZip').value;
     document.getElementById('pdf-address').innerText = document.getElementById('myAddress').value;
     document.getElementById('pdf-company').innerText = document.getElementById('myCompany').value;
@@ -69,7 +65,8 @@ function generatePDF() {
     let totalTax = 0;
 
     cards.forEach(card => {
-        const itemDate = card.querySelector('.item-date').value.replace(/-/g, '/');
+        const itemDateVal = card.querySelector('.item-date').value;
+        const itemDate = itemDateVal ? itemDateVal.replace(/-/g, '/') : '';
         const name = card.querySelector('.item-name').value;
         const note = card.querySelector('.item-note').value;
         const price = Number(card.querySelector('.item-price').value) || 0;
@@ -88,10 +85,7 @@ function generatePDF() {
             pdfItemsHTML += `
                 <tr>
                     <td>${itemDate}</td>
-                    <td>
-                        <div class="pdf-name">${name}</div>
-                        ${noteHTML}
-                    </td>
+                    <td><div class="pdf-name">${name}</div>${noteHTML}</td>
                     <td class="text-right">¥${price.toLocaleString()}</td>
                     <td>${qty}</td>
                     <td>${taxLabel}</td>
@@ -110,15 +104,13 @@ function generatePDF() {
     document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
     document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
 
-    // 💡【見切れ防止の魔法】スマホの画面幅に潰されないよう、画面外（裏側）に800pxで強制展開して撮影する
     const invoiceElement = document.getElementById('invoice-layout');
     invoiceElement.style.display = "block";
     invoiceElement.style.position = "absolute";
-    invoiceElement.style.left = "-9999px"; // 画面の遥か左に置く
+    invoiceElement.style.left = "-9999px"; 
     invoiceElement.style.top = "0";
-    invoiceElement.style.width = "800px";  // 強制的に800px幅にする
+    invoiceElement.style.width = "800px";  
 
-    // html2canvasにも「幅800pxで撮れ」と念押しする
     const opt = {
         margin:       0,
         filename:     '請求書_' + clientName + '.pdf',
@@ -128,7 +120,6 @@ function generatePDF() {
     };
 
     html2pdf().set(opt).from(invoiceElement).save().then(() => {
-        // 撮影が終わったら設定を元に戻して隠す
         invoiceElement.style.display = "none";
         invoiceElement.style.position = "static";
         invoiceElement.style.left = "auto";

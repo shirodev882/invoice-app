@@ -1,58 +1,110 @@
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f0f4f8; /* 背景を少し落ち着いた色に */
+    background-color: #f0f4f8;
     color: #333;
-    max-width: 400px; /* スマホで見やすい幅に制限 */
-    margin: 40px auto; /* 画面の中央に配置 */
-    padding: 30px 20px;
-    background: #ffffff; /* 入力エリアは白にしてカード風に */
-    border-radius: 12px; /* 角を丸くする */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* ふんわり影をつける */
+    margin: 0;
+    padding: 20px;
 }
 
-h2 {
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 0;
-    margin-bottom: 24px;
+/* 入力画面のデザイン */
+.app-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-label {
-    font-weight: bold;
-    font-size: 14px;
-    color: #555;
-}
+h2, h3 { color: #2c3e50; }
+.input-section { margin-bottom: 30px; }
 
-input[type="text"] {
+input {
     width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    margin-bottom: 20px;
+    padding: 10px;
+    margin-bottom: 12px;
     border: 1px solid #ccd1d9;
-    border-radius: 8px;
-    box-sizing: border-box; /* はみ出し防止 */
-    font-size: 16px; /* スマホでタップしたときのズーム防止 */
-    transition: border-color 0.3s;
-}
-
-input[type="text"]:focus {
-    border-color: #28a745; /* 入力中はおしゃれな緑色に */
-    outline: none;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
 button {
     width: 100%;
-    padding: 14px;
-    background-color: #28a745; /* 目立つ緑色のボタン */
+    padding: 15px;
+    background-color: #92c021; /* いただいた画像に近い緑色 */
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s;
+}
+button:hover { background-color: #7da81b; }
+
+/* ----------------------------------
+   ここから下はPDF（印刷）用のデザイン
+----------------------------------- */
+.invoice-box {
+    width: 800px; /* A4サイズを想定した幅 */
+    padding: 50px;
+    background: white;
+    color: black;
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
 }
 
-button:hover {
-    background-color: #218838; /* マウスを乗せたら少し濃くする */
+.invoice-title {
+    text-align: center;
+    letter-spacing: 10px;
+    border-bottom: 2px solid #92c021;
+    padding-bottom: 10px;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.header-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.client-info h2 {
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.total-box {
+    background: #92c021;
+    padding: 15px 30px;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.my-info p, .my-info h3 {
+    margin: 5px 0;
+    text-align: right;
+    font-size: 14px;
+}
+.my-info h3 { font-size: 18px; margin-top: 10px;}
+
+.item-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.item-table th, .item-table td {
+    border: 1px solid #333;
+    padding: 12px;
+    text-align: center;
+}
+
+.item-table th {
+    background: #92c021;
+    color: white;
 }

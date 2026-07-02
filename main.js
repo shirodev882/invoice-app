@@ -12,15 +12,12 @@ window.onload = function() {
     const dd = String(today.getDate()).padStart(2, '0');
     document.getElementById('issueDate').value = `${yyyy}-${mm}-${dd}`;
 
-    // 品目データを読み込む
     loadItems();
 
-    // 入力するたびに自動セーブする魔法をセット
     document.getElementById('input-items-container').addEventListener('input', saveItems);
     document.getElementById('input-items-container').addEventListener('change', saveItems);
 };
 
-// 【新機能】品目データをブラウザに記憶させる
 function saveItems() {
     const cards = document.querySelectorAll('.item-card');
     const items = [];
@@ -37,7 +34,6 @@ function saveItems() {
     localStorage.setItem('myInvoiceItems', JSON.stringify(items));
 }
 
-// 【新機能】記憶した品目データを復元する
 function loadItems() {
     const savedStr = localStorage.getItem('myInvoiceItems');
     const container = document.getElementById('input-items-container');
@@ -50,10 +46,9 @@ function loadItems() {
             return;
         }
     }
-    addRow(); // データが無い場合は空の行を1つ出す
+    addRow(); 
 }
 
-// 【新機能】品目をすべて削除する
 function clearAllItems() {
     if(confirm("品目リストをすべてリセットしますか？")) {
         localStorage.removeItem('myInvoiceItems');
@@ -62,7 +57,6 @@ function clearAllItems() {
     }
 }
 
-// 行を追加する（保存データがあればそれを入れる）
 function addRow(data = {}) {
     const container = document.getElementById('input-items-container');
     const div = document.createElement('div');
@@ -103,9 +97,7 @@ function removeRow(btn) {
     saveItems();
 }
 
-// PDFを作成＆自動オープン＆シェアする処理
 function generatePDF() {
-    // 情報をセーブ
     saveItems();
     localStorage.setItem('myZip', document.getElementById('myZip').value);
     localStorage.setItem('myAddress', document.getElementById('myAddress').value);
@@ -168,32 +160,41 @@ function generatePDF() {
     document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
     document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
 
-    // 💡【真っ白・見切れ防止の究極の魔法】
-    // 入力画面を「完全に非表示」にし、PDFレイアウトだけを画面の主役にします！
-    const appContainer = document.getElementById('app-container');
+    // 💡【真っ白・見切れ防止の完全決着】
+    // スクロール位置を一番上に戻し、画面の一番手前に白背景で広げて確実に撮影する
+    window.scrollTo(0, 0);
     const invoiceElement = document.getElementById('invoice-layout');
     
-    appContainer.style.display = "none";
     invoiceElement.style.display = "block";
+    invoiceElement.style.position = "absolute";
+    invoiceElement.style.top = "0";
+    invoiceElement.style.left = "0";
+    invoiceElement.style.width = "800px";
+    invoiceElement.style.zIndex = "9999"; 
+    invoiceElement.style.backgroundColor = "#ffffff";
 
     const opt = {
         margin:       0,
         filename:     '請求書_' + clientName + '.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 }, 
+        html2canvas:  { 
+            scale: 2, 
+            windowWidth: 800, 
+            width: 800,
+            scrollX: 0, 
+            scrollY: 0 
+        }, 
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // 💡【LINE・メール添付機能＆自動オープン】
     html2pdf().set(opt).from(invoiceElement).output('blob').then(function(blob) {
-        // 撮影が終わったら入力画面を元に戻す（一瞬の出来事なので違和感ゼロです）
+        // 撮影が終わったら隠す
         invoiceElement.style.display = "none";
-        appContainer.style.display = "block";
+        invoiceElement.style.position = "static";
+        invoiceElement.style.zIndex = "auto";
 
-        // PDFのデータ（File）を作成
         const file = new File([blob], '請求書_' + clientName + '.pdf', { type: 'application/pdf' });
 
-        // スマホのネイティブ機能（LINE、メール、AirDropなど）を呼び出す
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             navigator.share({
                 files: [file],
@@ -201,11 +202,8 @@ function generatePDF() {
                 text: '請求書のPDFデータをお送りします。'
             }).catch(e => console.log("シェアをキャンセルしました"));
         } else {
-            // パソコン等、シェア機能がない場合は「自動で開く」
             const url = URL.createObjectURL(blob);
             window.open(url, '_blank');
-            
-            // ついでにダウンロードもしておく
             const a = document.createElement('a');
             a.href = url;
             a.download = '請求書_' + clientName + '.pdf';

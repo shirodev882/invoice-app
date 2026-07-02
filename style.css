@@ -1,0 +1,58 @@
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f0f4f8; /* 背景を少し落ち着いた色に */
+    color: #333;
+    max-width: 400px; /* スマホで見やすい幅に制限 */
+    margin: 40px auto; /* 画面の中央に配置 */
+    padding: 30px 20px;
+    background: #ffffff; /* 入力エリアは白にしてカード風に */
+    border-radius: 12px; /* 角を丸くする */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* ふんわり影をつける */
+}
+
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 20px;
+    border: 1px solid #ccd1d9;
+    border-radius: 8px;
+    box-sizing: border-box; /* はみ出し防止 */
+    font-size: 16px; /* スマホでタップしたときのズーム防止 */
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: #28a745; /* 入力中はおしゃれな緑色に */
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: #28a745; /* 目立つ緑色のボタン */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #218838; /* マウスを乗せたら少し濃くする */
+}

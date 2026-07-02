@@ -104,25 +104,38 @@ function generatePDF() {
     document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
     document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
 
+    // 💡【修正ポイント】画面の遥か左（-9999px）に置くのをやめて、
+    // 今見ている画面の「一番上」の「裏側（z-index: -1）」に配置します。
+    // こうすることでスマホが「画面外だから切り捨てよう」とするのを防ぎます。
     const invoiceElement = document.getElementById('invoice-layout');
     invoiceElement.style.display = "block";
     invoiceElement.style.position = "absolute";
-    invoiceElement.style.left = "-9999px"; 
     invoiceElement.style.top = "0";
+    invoiceElement.style.left = "0";
+    invoiceElement.style.zIndex = "-1"; 
     invoiceElement.style.width = "800px";  
 
+    // 💡【修正ポイント】html2canvasのオプションに「scrollX: 0, scrollY: 0」を追加し、
+    // 勝手に画面幅でクロップされるのを強制的にブロックします。
     const opt = {
         margin:       0,
         filename:     '請求書_' + clientName + '.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, windowWidth: 800, width: 800 }, 
+        html2canvas:  { 
+            scale: 2, 
+            windowWidth: 800, 
+            width: 800,
+            scrollX: 0, 
+            scrollY: 0 
+        }, 
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     html2pdf().set(opt).from(invoiceElement).save().then(() => {
+        // 撮影が終わったら元に戻す
         invoiceElement.style.display = "none";
         invoiceElement.style.position = "static";
-        invoiceElement.style.left = "auto";
+        invoiceElement.style.zIndex = "auto";
         invoiceElement.style.width = "auto";
     });
 }

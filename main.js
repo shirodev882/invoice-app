@@ -13,7 +13,7 @@ window.onload = function() {
     document.getElementById('issueDate').value = `${yyyy}-${mm}-${dd}`;
 };
 
-// 行を追加する機能
+// 行を追加する機能（税率プルダウンを追加）
 function addRow() {
     const tbody = document.getElementById('input-items-body');
     const tr = document.createElement('tr');
@@ -21,7 +21,14 @@ function addRow() {
         <td><input type="text" class="item-name" placeholder="例: Web制作"></td>
         <td><input type="number" class="item-price" placeholder="単価"></td>
         <td><input type="number" class="item-qty" placeholder="数量" value="1"></td>
-        <td><button type="button" class="delete-btn" onclick="removeRow(this)">削除</button></td>
+        <td>
+            <select class="item-tax">
+                <option value="0.1">10%</option>
+                <option value="0.08">8%</option>
+                <option value="0">対象外</option>
+            </select>
+        </td>
+        <td><button type="button" class="delete-btn" onclick="removeRow(this)">×</button></td>
     `;
     tbody.appendChild(tr);
 }
@@ -60,20 +67,30 @@ function generatePDF() {
     const rows = document.querySelectorAll('#input-items-body tr');
     let pdfItemsHTML = '';
     let subtotal = 0;
+    let totalTax = 0;
 
     rows.forEach(row => {
         const name = row.querySelector('.item-name').value;
         const price = Number(row.querySelector('.item-price').value) || 0;
         const qty = Number(row.querySelector('.item-qty').value) || 0;
+        const taxRate = Number(row.querySelector('.item-tax').value); // 行ごとの税率を取得
+
         const lineTotal = price * qty;
+        const lineTax = Math.floor(lineTotal * taxRate); // 行ごとの消費税額（切り捨て計算）
         
         if(name || lineTotal > 0) {
             subtotal += lineTotal;
+            totalTax += lineTax;
+
+            // PDFに表示する税率のテキスト（10%, 8%, -）
+            let taxLabel = taxRate === 0.1 ? '10%' : (taxRate === 0.08 ? '8%' : '-');
+
             pdfItemsHTML += `
                 <tr>
                     <td>${name}</td>
                     <td>¥${price.toLocaleString()}</td>
                     <td>${qty}</td>
+                    <td>${taxLabel}</td>
                     <td>¥${lineTotal.toLocaleString()}</td>
                 </tr>
             `;
@@ -82,18 +99,16 @@ function generatePDF() {
 
     document.getElementById('pdf-items').innerHTML = pdfItemsHTML;
 
-    // 消費税と合計の計算
-    const useTax = document.getElementById('useTax').checked;
-    const tax = useTax ? Math.floor(subtotal * 0.1) : 0;
-    const total = subtotal + tax;
+    // 最終的な合計金額
+    const finalTotal = subtotal + totalTax;
 
     document.getElementById('pdf-subtotal').innerText = "¥" + subtotal.toLocaleString();
-    document.getElementById('pdf-tax').innerText = "¥" + tax.toLocaleString();
-    document.getElementById('pdf-total').innerText = "¥" + total.toLocaleString();
-    document.getElementById('pdf-amount').innerText = "¥" + total.toLocaleString() + " -";
+    document.getElementById('pdf-tax').innerText = "¥" + totalTax.toLocaleString();
+    document.getElementById('pdf-total').innerText = "¥" + finalTotal.toLocaleString();
+    document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
 
-    // 消費税オフなら税金の行を隠す
-    document.getElementById('pdf-tax-row').style.display = useTax ? "table-row" : "none";
+    // 消費税が0円の場合は、PDF上の消費税の行を隠す
+    document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
 
     // PDF化を実行
     const invoiceElement = document.getElementById('invoice-layout');

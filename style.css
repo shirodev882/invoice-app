@@ -7,7 +7,7 @@ body {
 }
 
 .app-container {
-    max-width: 550px;
+    max-width: 600px; /* プルダウンが増えた分少し広く */
     margin: 0 auto;
     background: #ffffff;
     border-radius: 12px;
@@ -18,32 +18,21 @@ body {
 h2, h3 { color: #2c3e50; }
 .input-section { margin-bottom: 30px; }
 
-input[type="text"], input[type="number"], input[type="email"], input[type="date"] {
+input[type="text"], input[type="number"], input[type="email"], input[type="date"], select {
     width: 100%;
     padding: 10px;
     margin-bottom: 12px;
     border: 1px solid #ccd1d9;
     border-radius: 6px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 14px;
 }
-
-.tax-toggle {
-    margin: 15px 0;
-    background: #eef5e5;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #92c021;
-}
-
-.tax-toggle input { width: auto; margin-right: 10px; }
-.tax-toggle label { font-weight: bold; color: #555; cursor: pointer; }
 
 /* 品目入力テーブル */
 .input-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-.input-table th { font-size: 14px; text-align: left; color: #555; font-weight: normal; }
-.input-table td { padding: 2px; }
-.input-table input { margin-bottom: 0; }
+.input-table th { font-size: 13px; text-align: left; color: #555; font-weight: normal; padding-bottom: 5px;}
+.input-table td { padding: 2px; vertical-align: top;}
+.input-table input, .input-table select { margin-bottom: 0; padding: 8px; }
 
 /* ボタン類 */
 .main-btn {
@@ -59,8 +48,8 @@ input[type="text"], input[type="number"], input[type="email"], input[type="date"
 .add-btn:hover { background-color: #e9ecef; }
 
 .delete-btn {
-    padding: 10px; background-color: #dc3545; color: white; border: none;
-    border-radius: 6px; font-size: 12px; cursor: pointer;
+    padding: 8px; background-color: #dc3545; color: white; border: none;
+    border-radius: 6px; font-size: 14px; cursor: pointer; width: 100%; font-weight: bold;
 }
 .delete-btn:hover { background-color: #c82333; }
 

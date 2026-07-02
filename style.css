@@ -6,9 +6,8 @@ body {
     padding: 20px;
 }
 
-/* 入力画面のデザイン */
 .app-container {
-    max-width: 500px;
+    max-width: 550px;
     margin: 0 auto;
     background: #ffffff;
     border-radius: 12px;
@@ -19,7 +18,7 @@ body {
 h2, h3 { color: #2c3e50; }
 .input-section { margin-bottom: 30px; }
 
-input {
+input[type="text"], input[type="number"], input[type="email"], input[type="date"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 12px;
@@ -29,82 +28,58 @@ input {
     font-size: 16px;
 }
 
-button {
-    width: 100%;
-    padding: 15px;
-    background-color: #92c021; /* いただいた画像に近い緑色 */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
+.tax-toggle {
+    margin: 15px 0;
+    background: #eef5e5;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #92c021;
 }
-button:hover { background-color: #7da81b; }
 
-/* ----------------------------------
-   ここから下はPDF（印刷）用のデザイン
------------------------------------ */
+.tax-toggle input { width: auto; margin-right: 10px; }
+.tax-toggle label { font-weight: bold; color: #555; cursor: pointer; }
+
+/* 品目入力テーブル */
+.input-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+.input-table th { font-size: 14px; text-align: left; color: #555; font-weight: normal; }
+.input-table td { padding: 2px; }
+.input-table input { margin-bottom: 0; }
+
+/* ボタン類 */
+.main-btn {
+    width: 100%; padding: 15px; background-color: #92c021; color: white;
+    border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer;
+}
+.main-btn:hover { background-color: #7da81b; }
+
+.add-btn {
+    width: 100%; padding: 10px; background-color: #f1f3f5; color: #333;
+    border: 1px dashed #adb5bd; border-radius: 6px; font-size: 14px; cursor: pointer; margin-bottom: 20px;
+}
+.add-btn:hover { background-color: #e9ecef; }
+
+.delete-btn {
+    padding: 10px; background-color: #dc3545; color: white; border: none;
+    border-radius: 6px; font-size: 12px; cursor: pointer;
+}
+.delete-btn:hover { background-color: #c82333; }
+
+/* PDF（印刷）用のデザイン */
 .invoice-box {
-    width: 800px; /* A4サイズを想定した幅 */
-    padding: 50px;
-    background: white;
-    color: black;
+    width: 800px; padding: 50px; background: white; color: black;
     font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
 }
-
-.invoice-title {
-    text-align: center;
-    letter-spacing: 10px;
-    border-bottom: 2px solid #92c021;
-    padding-bottom: 10px;
-    margin-bottom: 40px;
-    color: #333;
-}
-
-.header-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 40px;
-}
-
-.client-info h2 {
-    border-bottom: 1px solid #333;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-.total-box {
-    background: #92c021;
-    padding: 15px 30px;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-    margin-top: 20px;
-    display: inline-block;
-}
-
-.my-info p, .my-info h3 {
-    margin: 5px 0;
-    text-align: right;
-    font-size: 14px;
-}
+.invoice-title { text-align: center; letter-spacing: 10px; border-bottom: 2px solid #92c021; padding-bottom: 10px; margin-bottom: 40px; }
+.header-info { display: flex; justify-content: space-between; margin-bottom: 40px; }
+.client-info h2 { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 20px; font-size: 24px; }
+.total-box { background: #92c021; padding: 15px 30px; font-size: 24px; font-weight: bold; color: white; margin-top: 20px; display: inline-block; }
+.my-info p, .my-info h3 { margin: 5px 0; text-align: right; font-size: 14px; }
 .my-info h3 { font-size: 18px; margin-top: 10px;}
 
-.item-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-.item-table th, .item-table td {
-    border: 1px solid #333;
-    padding: 12px;
-    text-align: center;
-}
-
-.item-table th {
-    background: #92c021;
-    color: white;
-}
+.item-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.item-table th, .item-table td { border: 1px solid #333; padding: 12px; text-align: center; }
+.item-table th { background: #92c021; color: white; }
+.item-table tfoot td { border: 1px solid #333; }
+.text-right { text-align: right !important; padding-right: 20px !important; }
+.fw-bold { font-weight: bold; }
+.total-color { color: #92c021; }

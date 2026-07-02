@@ -28,14 +28,34 @@
             <label>請求先名:</label>
             <input type="text" id="clientName" placeholder="例: 株式会社山田商事">
 
-            <label>ご請求金額:</label>
-            <input type="number" id="amount" placeholder="例: 896500">
+            <div class="tax-toggle">
+                <input type="checkbox" id="useTax" checked>
+                <label for="useTax">消費税 (10%) を加算する</label>
+            </div>
 
-            <label>品目:</label>
-            <input type="text" id="itemName" placeholder="例: Webサイト制作費">
+            <label>品目リスト:</label>
+            <table class="input-table">
+                <thead>
+                    <tr>
+                        <th>品名</th>
+                        <th>単価</th>
+                        <th>数量</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="input-items-body">
+                    <tr>
+                        <td><input type="text" class="item-name" placeholder="例: Web制作"></td>
+                        <td><input type="number" class="item-price" placeholder="単価"></td>
+                        <td><input type="number" class="item-qty" placeholder="数量" value="1"></td>
+                        <td><button type="button" class="delete-btn" onclick="removeRow(this)">削除</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" class="add-btn" onclick="addRow()">+ 品目を追加する</button>
         </div>
 
-        <button onclick="generatePDF()">この内容でPDFを作成する</button>
+        <button class="main-btn" onclick="generatePDF()">この内容でPDFを作成する</button>
     </div>
 
     <div id="invoice-layout" class="invoice-box" style="display: none;">
@@ -62,15 +82,27 @@
             <thead>
                 <tr>
                     <th>品名</th>
+                    <th>単価</th>
+                    <th>数量</th>
                     <th>金額</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="pdf-items">
+                </tbody>
+            <tfoot>
                 <tr>
-                    <td id="pdf-item">品目</td>
-                    <td id="pdf-item-price">0</td>
+                    <td colspan="3" class="text-right fw-bold">小計</td>
+                    <td id="pdf-subtotal" class="fw-bold">¥0</td>
                 </tr>
-            </tbody>
+                <tr id="pdf-tax-row">
+                    <td colspan="3" class="text-right fw-bold">消費税 (10%)</td>
+                    <td id="pdf-tax" class="fw-bold">¥0</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-right fw-bold total-color">合計金額</td>
+                    <td id="pdf-total" class="fw-bold total-color">¥0</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 

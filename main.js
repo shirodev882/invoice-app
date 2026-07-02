@@ -1,13 +1,11 @@
-// ① ページを開いた時に「今日の日付」と「保存された自社情報」をセットする
+// ページを開いた時の初期設定
 window.onload = function() {
-    // ローカルストレージ（ブラウザの記憶）からデータを呼び出す
     document.getElementById('myZip').value = localStorage.getItem('myZip') || '';
     document.getElementById('myAddress').value = localStorage.getItem('myAddress') || '';
     document.getElementById('myCompany').value = localStorage.getItem('myCompany') || '';
     document.getElementById('myPhone').value = localStorage.getItem('myPhone') || '';
     document.getElementById('myEmail').value = localStorage.getItem('myEmail') || '';
 
-    // 今日の日付を YYYY-MM-DD 形式で作ってセットする
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -15,44 +13,91 @@ window.onload = function() {
     document.getElementById('issueDate').value = `${yyyy}-${mm}-${dd}`;
 };
 
-// ② PDF作成ボタンを押した時の処理
+// 行を追加する機能
+function addRow() {
+    const tbody = document.getElementById('input-items-body');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><input type="text" class="item-name" placeholder="例: Web制作"></td>
+        <td><input type="number" class="item-price" placeholder="単価"></td>
+        <td><input type="number" class="item-qty" placeholder="数量" value="1"></td>
+        <td><button type="button" class="delete-btn" onclick="removeRow(this)">削除</button></td>
+    `;
+    tbody.appendChild(tr);
+}
+
+// 行を削除する機能
+function removeRow(btn) {
+    btn.closest('tr').remove();
+}
+
+// PDFを作成する機能
 function generatePDF() {
-    // 1. 今回入力された自社情報をブラウザに記憶させる（次回から入力不要！）
+    // 自社情報を保存
     localStorage.setItem('myZip', document.getElementById('myZip').value);
     localStorage.setItem('myAddress', document.getElementById('myAddress').value);
     localStorage.setItem('myCompany', document.getElementById('myCompany').value);
     localStorage.setItem('myPhone', document.getElementById('myPhone').value);
     localStorage.setItem('myEmail', document.getElementById('myEmail').value);
 
-    // 2. 入力された文字を、隠してあるPDF用レイアウトに流し込む
+    // 基本情報を流し込む
     const clientName = document.getElementById('clientName').value;
     document.getElementById('pdf-client').innerText = clientName + " 御中";
     
-    // 金額にカンマをつけて表示
-    const amountVal = document.getElementById('amount').value;
-    const formattedAmount = Number(amountVal).toLocaleString();
-    document.getElementById('pdf-amount').innerText = "¥" + formattedAmount + " -";
-    document.getElementById('pdf-item-price').innerText = "¥" + formattedAmount;
-
-    // 品目と日付
-    document.getElementById('pdf-item').innerText = document.getElementById('itemName').value;
     const dateVal = document.getElementById('issueDate').value;
-    document.getElementById('pdf-date').innerText = dateVal.replace(/-/g, '/'); // 2026-07-02 を 2026/07/02 に変換
+    document.getElementById('pdf-date').innerText = dateVal.replace(/-/g, '/');
 
-    // 自社情報を流し込む
     document.getElementById('pdf-zip').innerText = "〒" + document.getElementById('myZip').value;
     document.getElementById('pdf-address').innerText = document.getElementById('myAddress').value;
     document.getElementById('pdf-company').innerText = document.getElementById('myCompany').value;
     
     const phone = document.getElementById('myPhone').value;
-    document.getElementById('pdf-phone').innerText = phone ? "TEL: " + phone : ""; // 空欄ならTELごと消す
-    
+    document.getElementById('pdf-phone').innerText = phone ? "TEL: " + phone : "";
     const email = document.getElementById('myEmail').value;
     document.getElementById('pdf-email').innerText = email ? "Email: " + email : "";
 
-    // 3. 隠していたレイアウトを一瞬だけ表示して、PDF化を実行する
+    // 品目リストの計算と流し込み
+    const rows = document.querySelectorAll('#input-items-body tr');
+    let pdfItemsHTML = '';
+    let subtotal = 0;
+
+    rows.forEach(row => {
+        const name = row.querySelector('.item-name').value;
+        const price = Number(row.querySelector('.item-price').value) || 0;
+        const qty = Number(row.querySelector('.item-qty').value) || 0;
+        const lineTotal = price * qty;
+        
+        if(name || lineTotal > 0) {
+            subtotal += lineTotal;
+            pdfItemsHTML += `
+                <tr>
+                    <td>${name}</td>
+                    <td>¥${price.toLocaleString()}</td>
+                    <td>${qty}</td>
+                    <td>¥${lineTotal.toLocaleString()}</td>
+                </tr>
+            `;
+        }
+    });
+
+    document.getElementById('pdf-items').innerHTML = pdfItemsHTML;
+
+    // 消費税と合計の計算
+    const useTax = document.getElementById('useTax').checked;
+    const tax = useTax ? Math.floor(subtotal * 0.1) : 0;
+    const total = subtotal + tax;
+
+    document.getElementById('pdf-subtotal').innerText = "¥" + subtotal.toLocaleString();
+    document.getElementById('pdf-tax').innerText = "¥" + tax.toLocaleString();
+    document.getElementById('pdf-total').innerText = "¥" + total.toLocaleString();
+    document.getElementById('pdf-amount').innerText = "¥" + total.toLocaleString() + " -";
+
+    // 消費税オフなら税金の行を隠す
+    document.getElementById('pdf-tax-row').style.display = useTax ? "table-row" : "none";
+
+    // PDF化を実行
     const invoiceElement = document.getElementById('invoice-layout');
-    invoiceElement.style.display = "block"; // 一瞬表示
+    invoiceElement.style.display = "block";
 
     const opt = {
         margin:       0,
@@ -63,6 +108,6 @@ function generatePDF() {
     };
 
     html2pdf().set(opt).from(invoiceElement).save().then(() => {
-        invoiceElement.style.display = "none"; // PDF化が終わったらまた隠す
+        invoiceElement.style.display = "none";
     });
 }

@@ -38,57 +38,65 @@
             </div>
         </div>
 
-        <button class="main-btn" onclick="generatePDF()">この内容でPDFを作成する</button>
+        <button class="main-btn" onclick="previewPDF()">🔍 PDFの仕上がりを確認する</button>
     </div>
 
-    <div id="invoice-layout" class="invoice-box" style="display: none;">
-        <h1 class="invoice-title">請求書</h1>
-        <div class="header-info">
-            <div class="client-info">
-                <h2 id="pdf-client">〇〇様</h2>
-                <p>下記の通りご請求申し上げます。</p>
-                <div class="total-box">
-                    <span>ご請求金額</span>
-                    <span id="pdf-amount" class="price">¥0 -</span>
+    <div id="preview-container" style="display: none;">
+        
+        <div class="preview-actions">
+            <button class="cancel-btn" onclick="closePreview()">◀ 修正する</button>
+            <button class="share-btn" onclick="executePDF()">送信・保存する ▶</button>
+        </div>
+
+        <div id="invoice-layout" class="invoice-box">
+            <h1 class="invoice-title">請求書</h1>
+            <div class="header-info">
+                <div class="client-info">
+                    <h2 id="pdf-client">〇〇様</h2>
+                    <p>下記の通りご請求申し上げます。</p>
+                    <div class="total-box">
+                        <span>ご請求金額</span>
+                        <span id="pdf-amount" class="price">¥0 -</span>
+                    </div>
+                </div>
+                <div class="my-info">
+                    <p>発行日: <span id="pdf-date">202X年X月X日</span></p>
+                    <p id="pdf-zip">〒</p>
+                    <p id="pdf-address">住所</p>
+                    <h3 id="pdf-company">会社名</h3>
+                    <p id="pdf-invoice-number">登録番号: </p>
+                    <p id="pdf-phone">TEL: </p>
+                    <p id="pdf-email">Email: </p>
                 </div>
             </div>
-            <div class="my-info">
-                <p>発行日: <span id="pdf-date">202X年X月X日</span></p>
-                <p id="pdf-zip">〒</p>
-                <p id="pdf-address">住所</p>
-                <h3 id="pdf-company">会社名</h3>
-                <p id="pdf-invoice-number">登録番号: </p>
-                <p id="pdf-phone">TEL: </p>
-                <p id="pdf-email">Email: </p>
-            </div>
+            <table class="item-table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">日付</th>
+                        <th style="width: 35%;">品名 / 備考</th>
+                        <th style="width: 15%;">単価</th>
+                        <th style="width: 10%;">数量</th>
+                        <th style="width: 10%;">税率</th>
+                        <th style="width: 15%;">金額</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-items"></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right fw-bold">小計</td>
+                        <td id="pdf-subtotal" class="fw-bold text-right">¥0</td>
+                    </tr>
+                    <tr id="pdf-tax-row">
+                        <td colspan="5" class="text-right fw-bold">消費税</td>
+                        <td id="pdf-tax" class="fw-bold text-right">¥0</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right fw-bold total-color">合計金額</td>
+                        <td id="pdf-total" class="fw-bold total-color text-right">¥0</td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
-        <table class="item-table">
-            <thead>
-                <tr>
-                    <th style="width: 15%;">日付</th>
-                    <th style="width: 35%;">品名 / 備考</th>
-                    <th style="width: 15%;">単価</th>
-                    <th style="width: 10%;">数量</th>
-                    <th style="width: 10%;">税率</th>
-                    <th style="width: 15%;">金額</th>
-                </tr>
-            </thead>
-            <tbody id="pdf-items"></tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="5" class="text-right fw-bold">小計</td>
-                    <td id="pdf-subtotal" class="fw-bold text-right">¥0</td>
-                </tr>
-                <tr id="pdf-tax-row">
-                    <td colspan="5" class="text-right fw-bold">消費税</td>
-                    <td id="pdf-tax" class="fw-bold text-right">¥0</td>
-                </tr>
-                <tr>
-                    <td colspan="5" class="text-right fw-bold total-color">合計金額</td>
-                    <td id="pdf-total" class="fw-bold total-color text-right">¥0</td>
-                </tr>
-            </tfoot>
-        </table>
     </div>
 
     <script src="main.js"></script>

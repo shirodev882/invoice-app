@@ -3,6 +3,7 @@ window.onload = function() {
     document.getElementById('myZip').value = localStorage.getItem('myZip') || '';
     document.getElementById('myAddress').value = localStorage.getItem('myAddress') || '';
     document.getElementById('myCompany').value = localStorage.getItem('myCompany') || '';
+    document.getElementById('myInvoiceNumber').value = localStorage.getItem('myInvoiceNumber') || '';
     document.getElementById('myPhone').value = localStorage.getItem('myPhone') || '';
     document.getElementById('myEmail').value = localStorage.getItem('myEmail') || '';
 
@@ -102,6 +103,7 @@ function generatePDF() {
     localStorage.setItem('myZip', document.getElementById('myZip').value);
     localStorage.setItem('myAddress', document.getElementById('myAddress').value);
     localStorage.setItem('myCompany', document.getElementById('myCompany').value);
+    localStorage.setItem('myInvoiceNumber', document.getElementById('myInvoiceNumber').value);
     localStorage.setItem('myPhone', document.getElementById('myPhone').value);
     localStorage.setItem('myEmail', document.getElementById('myEmail').value);
 
@@ -112,8 +114,15 @@ function generatePDF() {
     document.getElementById('pdf-zip').innerText = "〒" + document.getElementById('myZip').value;
     document.getElementById('pdf-address').innerText = document.getElementById('myAddress').value;
     document.getElementById('pdf-company').innerText = document.getElementById('myCompany').value;
-    document.getElementById('pdf-phone').innerText = document.getElementById('myPhone').value ? "TEL: " + document.getElementById('myPhone').value : "";
-    document.getElementById('pdf-email').innerText = document.getElementById('myEmail').value ? "Email: " + document.getElementById('myEmail').value : "";
+    
+    // 【インボイス番号をPDFに流し込む】
+    const invoiceNum = document.getElementById('myInvoiceNumber').value;
+    document.getElementById('pdf-invoice-number').innerText = invoiceNum ? "登録番号: " + invoiceNum : "";
+    
+    const phone = document.getElementById('myPhone').value;
+    document.getElementById('pdf-phone').innerText = phone ? "TEL: " + phone : "";
+    const email = document.getElementById('myEmail').value;
+    document.getElementById('pdf-email').innerText = email ? "Email: " + email : "";
 
     const cards = document.querySelectorAll('.item-card');
     let pdfItemsHTML = '';
@@ -160,17 +169,14 @@ function generatePDF() {
     document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
     document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
 
-    // --- 真っ白バグ＆見切れバグの完全修正 ---
     const appContainer = document.getElementById('app-container');
     const invoiceElement = document.getElementById('invoice-layout');
     
-    // スクロールを一番上に戻し、入力画面を隠して請求書を表示
     window.scrollTo(0, 0);
     appContainer.style.display = "none";
     invoiceElement.style.display = "block";
     invoiceElement.style.backgroundColor = "#ffffff";
 
-    // 💡【重要】スマホが文字を描画し終わるまで「0.5秒」だけ待つ！
     setTimeout(() => {
         const opt = {
             margin:       0,
@@ -181,7 +187,6 @@ function generatePDF() {
         };
 
         html2pdf().set(opt).from(invoiceElement).output('blob').then(function(blob) {
-            // 撮影が終わったら元の画面に戻す
             invoiceElement.style.display = "none";
             appContainer.style.display = "block";
 
@@ -202,5 +207,5 @@ function generatePDF() {
                 a.click();
             }
         });
-    }, 500); // ← ここが「真っ白」を防ぐための待ち時間です
+    }, 500);
 }

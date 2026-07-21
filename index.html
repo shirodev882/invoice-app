@@ -10,7 +10,6 @@
 <body>
     <div class="app-container" id="app-container">
         <h2>請求書メーカー</h2>
-
         <div class="input-section">
             <h3>🏢 自社情報（自動保存）</h3>
             <input type="text" id="myZip" placeholder="〒 (例: 000-0000)">
@@ -19,46 +18,22 @@
             <input type="text" id="myInvoiceNumber" placeholder="インボイス登録番号 (例: T1234567890123)">
             <input type="text" id="myPhone" placeholder="電話番号 (任意)">
             <input type="email" id="myEmail" placeholder="メールアドレス (任意)">
+            <!-- 💡新たに追加：自由記入欄 -->
+            <textarea id="myFreeText" rows="4" placeholder="振込先口座や、備考などの自由記入欄"></textarea>
         </div>
-
         <div class="input-section">
             <h3>📝 請求情報</h3>
             <label>発行日 (空欄なら今日):</label>
             <input type="date" id="issueDate">
             <label>請求先名:</label>
             <input type="text" id="clientName" placeholder="例: 株式会社山田商事">
-
             <label style="margin-top:20px; display:block;">品目リスト（自動保存）:</label>
-            <div id="input-items-container">
-                <div class="item-card">
-                    <div style="text-align: right; margin-bottom: 5px;">
-                        <span onclick="removeRow(this)" style="color: #dc3545; font-size: 13px; cursor: pointer; font-weight: bold;">✖ 削除</span>
-                    </div>
-                    <div class="item-row">
-                        <input type="text" class="item-date" placeholder="日付" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
-                        <input type="text" class="item-name" placeholder="品名 (例: 出張費)">
-                    </div>
-                    <div class="item-row col-3">
-                        <input type="number" class="item-price" placeholder="単価">
-                        <input type="number" class="item-qty" placeholder="数量" value="1">
-                        <select class="item-tax">
-                            <option value="0.1">10%</option>
-                            <option value="0.08">8%</option>
-                            <option value="0">対象外</option>
-                        </select>
-                    </div>
-                    <div class="item-row">
-                        <input type="text" class="item-note" placeholder="備考 (任意)">
-                    </div>
-                </div>
-            </div>
-            
+            <div id="input-items-container"></div>
             <div class="action-buttons">
                 <button type="button" class="add-btn" onclick="addRow()">+ 品目を追加</button>
                 <button type="button" class="clear-btn" onclick="clearAllItems()">🗑️ 全削除</button>
             </div>
         </div>
-
         <button class="main-btn" onclick="previewPDF()">🔍 PDFの仕上がりを確認する</button>
     </div>
 
@@ -67,7 +42,6 @@
             <button class="cancel-btn" onclick="closePreview()">◀ 修正する</button>
             <button class="share-btn" onclick="executePDF()">送信・保存する ▶</button>
         </div>
-
         <div id="invoice-layout" class="invoice-box">
             <h1 class="invoice-title">請求書</h1>
             <div class="header-info">
@@ -116,9 +90,10 @@
                     </tr>
                 </tfoot>
             </table>
+            <!-- 💡新たに追加：PDFの一番下に表示される自由記入欄 -->
+            <div id="pdf-free-text" class="pdf-free-text" style="display: none;"></div>
         </div>
     </div>
-
     <script src="main.js"></script>
 </body>
 </html>

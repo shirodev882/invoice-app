@@ -5,15 +5,12 @@ window.onload = function() {
     document.getElementById('myInvoiceNumber').value = localStorage.getItem('myInvoiceNumber') || '';
     document.getElementById('myPhone').value = localStorage.getItem('myPhone') || '';
     document.getElementById('myEmail').value = localStorage.getItem('myEmail') || '';
+    // 💡新たに追加：自由記入欄の読み込み
+    document.getElementById('myFreeText').value = localStorage.getItem('myFreeText') || '';
 
     const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    document.getElementById('issueDate').value = `${yyyy}-${mm}-${dd}`;
-
+    document.getElementById('issueDate').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
     loadItems();
-
     document.getElementById('input-items-container').addEventListener('input', saveItems);
     document.getElementById('input-items-container').addEventListener('change', saveItems);
 };
@@ -36,15 +33,10 @@ function saveItems() {
 
 function loadItems() {
     const savedStr = localStorage.getItem('myInvoiceItems');
-    const container = document.getElementById('input-items-container');
-    container.innerHTML = ''; 
-
+    document.getElementById('input-items-container').innerHTML = ''; 
     if (savedStr) {
         const items = JSON.parse(savedStr);
-        if (items.length > 0) {
-            items.forEach(data => addRow(data));
-            return;
-        }
+        if (items.length > 0) { items.forEach(data => addRow(data)); return; }
     }
     addRow(); 
 }
@@ -61,9 +53,7 @@ function addRow(data = {}) {
     const container = document.getElementById('input-items-container');
     const div = document.createElement('div');
     div.className = 'item-card';
-
     const dDate = data.date || '';
-    // 💡日付が入っていればdate型、空っぽならtext型（プレースホルダー表示用）にする
     const dateType = dDate ? 'date' : 'text'; 
     const dName = data.name || '';
     const dPrice = data.price || '';
@@ -109,67 +99,60 @@ function previewPDF() {
     localStorage.setItem('myInvoiceNumber', document.getElementById('myInvoiceNumber').value);
     localStorage.setItem('myPhone', document.getElementById('myPhone').value);
     localStorage.setItem('myEmail', document.getElementById('myEmail').value);
+    
+    // 💡新たに追加：自由記入欄の保存
+    const freeTextVal = document.getElementById('myFreeText').value;
+    localStorage.setItem('myFreeText', freeTextVal);
 
-    const clientName = document.getElementById('clientName').value || 'お客様';
-    document.getElementById('pdf-client').innerText = clientName + " 御中";
-    const dateVal = document.getElementById('issueDate').value;
-    document.getElementById('pdf-date').innerText = dateVal.replace(/-/g, '/');
+    document.getElementById('pdf-client').innerText = (document.getElementById('clientName').value || 'お客様') + " 御中";
+    document.getElementById('pdf-date').innerText = document.getElementById('issueDate').value.replace(/-/g, '/');
     document.getElementById('pdf-zip').innerText = "〒" + document.getElementById('myZip').value;
     document.getElementById('pdf-address').innerText = document.getElementById('myAddress').value;
     document.getElementById('pdf-company').innerText = document.getElementById('myCompany').value;
-    
-    const invoiceNum = document.getElementById('myInvoiceNumber').value;
-    document.getElementById('pdf-invoice-number').innerText = invoiceNum ? "登録番号: " + invoiceNum : "";
-    
-    const phone = document.getElementById('myPhone').value;
-    document.getElementById('pdf-phone').innerText = phone ? "TEL: " + phone : "";
-    const email = document.getElementById('myEmail').value;
-    document.getElementById('pdf-email').innerText = email ? "Email: " + email : "";
+    document.getElementById('pdf-invoice-number').innerText = document.getElementById('myInvoiceNumber').value ? "登録番号: " + document.getElementById('myInvoiceNumber').value : "";
+    document.getElementById('pdf-phone').innerText = document.getElementById('myPhone').value ? "TEL: " + document.getElementById('myPhone').value : "";
+    document.getElementById('pdf-email').innerText = document.getElementById('myEmail').value ? "Email: " + document.getElementById('myEmail').value : "";
 
-    const cards = document.querySelectorAll('.item-card');
-    let pdfItemsHTML = '';
-    let subtotal = 0;
-    let totalTax = 0;
-
-    cards.forEach(card => {
+    let pdfItemsHTML = '', subtotal = 0, totalTax = 0;
+    document.querySelectorAll('.item-card').forEach(card => {
         const itemDateVal = card.querySelector('.item-date').value;
-        const itemDate = itemDateVal ? itemDateVal.replace(/-/g, '/') : '';
         const name = card.querySelector('.item-name').value;
         const note = card.querySelector('.item-note').value;
         const price = Number(card.querySelector('.item-price').value) || 0;
         const qty = Number(card.querySelector('.item-qty').value) || 0;
         const taxRate = Number(card.querySelector('.item-tax').value);
-
         const lineTotal = price * qty;
         const lineTax = Math.floor(lineTotal * taxRate);
         
         if(name || lineTotal > 0) {
             subtotal += lineTotal;
             totalTax += lineTax;
-            let taxLabel = taxRate === 0.1 ? '10%' : (taxRate === 0.08 ? '8%' : '-');
-            const noteHTML = note ? `<div class="pdf-note">※${note}</div>` : '';
-
-            pdfItemsHTML += `
-                <tr>
-                    <td>${itemDate}</td>
-                    <td><div class="pdf-name">${name}</div>${noteHTML}</td>
-                    <td class="text-right">¥${price.toLocaleString()}</td>
-                    <td>${qty}</td>
-                    <td>${taxLabel}</td>
-                    <td class="text-right">¥${lineTotal.toLocaleString()}</td>
-                </tr>
-            `;
+            pdfItemsHTML += `<tr>
+                <td>${itemDateVal ? itemDateVal.replace(/-/g, '/') : ''}</td>
+                <td><div class="pdf-name">${name}</div>${note ? `<div class="pdf-note">※${note}</div>` : ''}</td>
+                <td class="text-right">¥${price.toLocaleString()}</td>
+                <td>${qty}</td>
+                <td>${taxRate === 0.1 ? '10%' : (taxRate === 0.08 ? '8%' : '-')}</td>
+                <td class="text-right">¥${lineTotal.toLocaleString()}</td>
+            </tr>`;
         }
     });
 
     document.getElementById('pdf-items').innerHTML = pdfItemsHTML;
-
-    const finalTotal = subtotal + totalTax;
     document.getElementById('pdf-subtotal').innerText = "¥" + subtotal.toLocaleString();
     document.getElementById('pdf-tax').innerText = "¥" + totalTax.toLocaleString();
-    document.getElementById('pdf-total').innerText = "¥" + finalTotal.toLocaleString();
-    document.getElementById('pdf-amount').innerText = "¥" + finalTotal.toLocaleString() + " -";
+    document.getElementById('pdf-total').innerText = "¥" + (subtotal + totalTax).toLocaleString();
+    document.getElementById('pdf-amount').innerText = "¥" + (subtotal + totalTax).toLocaleString() + " -";
     document.getElementById('pdf-tax-row').style.display = totalTax > 0 ? "table-row" : "none";
+
+    // 💡新たに追加：自由記入欄の表示処理（空っぽなら枠ごと隠す）
+    const pdfFreeTextEl = document.getElementById('pdf-free-text');
+    if (freeTextVal) {
+        pdfFreeTextEl.innerText = freeTextVal;
+        pdfFreeTextEl.style.display = "block";
+    } else {
+        pdfFreeTextEl.style.display = "none";
+    }
 
     document.getElementById('app-container').style.display = "none";
     document.getElementById('preview-container').style.display = "block";
@@ -185,30 +168,16 @@ function closePreview() {
 function executePDF() {
     const clientName = document.getElementById('clientName').value || 'お客様';
     const invoiceElement = document.getElementById('invoice-layout');
-    
     const actionButtons = document.querySelector('.preview-actions');
     actionButtons.style.display = "none";
 
     setTimeout(() => {
-        const opt = {
-            margin:       0,
-            filename:     '請求書_' + clientName + '.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, scrollX: 0, scrollY: 0 }, 
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
+        const opt = { margin: 0, filename: '請求書_' + clientName + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, scrollX: 0, scrollY: 0 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
         html2pdf().set(opt).from(invoiceElement).output('blob').then(function(blob) {
             actionButtons.style.display = "flex";
-
             const file = new File([blob], '請求書_' + clientName + '.pdf', { type: 'application/pdf' });
-
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({
-                    files: [file],
-                    title: '請求書',
-                    text: '請求書のPDFデータをお送りします。'
-                }).catch(e => console.log("シェアをキャンセルしました"));
+                navigator.share({ files: [file], title: '請求書', text: '請求書のPDFデータをお送りします。' }).catch(e => console.log("シェアをキャンセルしました"));
             } else {
                 const url = URL.createObjectURL(blob);
                 window.open(url, '_blank');

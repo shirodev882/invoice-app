@@ -18,7 +18,6 @@
             <input type="text" id="myInvoiceNumber" placeholder="インボイス登録番号 (例: T1234567890123)">
             <input type="text" id="myPhone" placeholder="電話番号 (任意)">
             <input type="email" id="myEmail" placeholder="メールアドレス (任意)">
-            <!-- 💡新たに追加：自由記入欄 -->
             <textarea id="myFreeText" rows="4" placeholder="振込先口座や、備考などの自由記入欄"></textarea>
         </div>
         <div class="input-section">
@@ -90,10 +89,10 @@
                     </tr>
                 </tfoot>
             </table>
-            <!-- 💡新たに追加：PDFの一番下に表示される自由記入欄 -->
             <div id="pdf-free-text" class="pdf-free-text" style="display: none;"></div>
         </div>
     </div>
-    <script src="main.js"></script>
+    <!-- 👇 ここが魔法のコードに変わっています！ -->
+    <script src="main.js?v=999"></script>
 </body>
 </html>

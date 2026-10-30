@@ -188,25 +188,27 @@ function closePreview() {
 function executePDF() {
     if (!readyPdfBlob) return; 
     
+    // スマホ・タブレットかどうかを判定（iPadOS対応含む）
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const file = new File([readyPdfBlob], readyPdfName, { type: 'application/pdf' });
     
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    // スマホ・タブレットの場合は共有メニューを開く
+    if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
         navigator.share({ 
             files: [file], 
             title: '請求書', 
             text: '請求書のPDFデータをお送りします。' 
         }).catch(e => console.log("シェアをキャンセルしました"));
     } else {
-        const reader = new FileReader();
-        reader.readAsDataURL(readyPdfBlob);
-        reader.onloadend = function() {
-            const base64data = reader.result;
-            const a = document.createElement('a');
-            a.href = base64data;
-            a.download = readyPdfName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
+        // PCの場合は直接ダウンロードを実行する
+        const url = URL.createObjectURL(readyPdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = readyPdfName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 }
